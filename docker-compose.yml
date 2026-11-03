@@ -1,0 +1,29 @@
+# THUNDERDOME — free base range (self-hosted graded pentest lab).
+# Both services bind to 127.0.0.1 ONLY. Keep it that way — these boxes are
+# intentionally vulnerable. Do not expose them to a real network.
+name: thunderdome
+
+services:
+  td-web:
+    build:
+      context: .
+      dockerfile: web.Dockerfile
+    container_name: td-web
+    ports:
+      - "127.0.0.1:8080:8080"     # the vulnerable web app
+    networks: [range]
+    restart: unless-stopped
+
+  td-service:
+    build:
+      context: .
+      dockerfile: service.Dockerfile
+    container_name: td-service
+    ports:
+      - "127.0.0.1:6379:6379"     # unauthenticated Redis
+    networks: [range]
+    restart: unless-stopped
+
+networks:
+  range:
+    driver: bridge
